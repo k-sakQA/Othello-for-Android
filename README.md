@@ -29,7 +29,17 @@ npm run auth-setup -- --url "https://example.com/login"
 ## 探索/再実行への適用
 Explorer / Replayer は起動時に `auth/session.bin` が存在すれば自動で adb push します。ログイン画面をスキップしてテストを開始できます。
 
-現在 CLI エントリは auth-setup のみですが、今後 `explore` / `replay` コマンドを追加予定です（実装は `src/core` を参照）。
+`explore` / `replay` コマンドを追加しました。Vision/LLM なしでも手元で流れを確認できるよう、コンソール入力で次アクションを指示する手動プランナーを利用しています（スクリーンショット取得・tap/input/scroll/back は ADB で実行されます）。
+
+### 探索の実行
+```bash
+npm run explore -- --url "https://example.com" --intent "ログインして一覧が表示されること" --max-steps 5 --out routes/login.json
+```
+
+### ルートの再生
+```bash
+npm run replay -- --route routes/login.json --url "https://example.com"
+```
 
 ## スクリプト
 - `npm test` : ユニットテスト（Vitest）

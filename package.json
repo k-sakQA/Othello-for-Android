@@ -6,7 +6,9 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "auth-setup": "tsx src/cli/authSetup.ts"
+    "auth-setup": "tsx src/cli/authSetup.ts",
+    "explore": "tsx src/cli/explore.ts",
+    "replay": "tsx src/cli/replay.ts"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
