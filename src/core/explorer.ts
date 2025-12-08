@@ -9,25 +9,32 @@ import type {
   RouteStep,
   VisionClient,
 } from "./types.js";
+import type { AuthSessionManager } from "../auth/authSessionManager.js";
 
 export interface ExplorerDependencies {
   device: AndroidDevice;
   vision: VisionClient;
   planner: Planner;
+  authSessionManager?: AuthSessionManager;
 }
 
 export class Explorer {
   private readonly device: AndroidDevice;
   private readonly vision: VisionClient;
   private readonly planner: Planner;
+  private readonly authSessionManager?: AuthSessionManager;
 
   constructor(deps: ExplorerDependencies) {
     this.device = deps.device;
     this.vision = deps.vision;
     this.planner = deps.planner;
+    this.authSessionManager = deps.authSessionManager;
   }
 
   async run(options: ExplorerOptions): Promise<Route> {
+    if (this.authSessionManager) {
+      await this.authSessionManager.pushSessionIfExists();
+    }
     await this.device.openUrl(options.url);
 
     const route: Route = {

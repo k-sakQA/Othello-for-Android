@@ -6,6 +6,7 @@ import type {
   PlannerDecision,
   VisionClient,
 } from "../src/core/types.js";
+import type { AuthSessionManager } from "../src/auth/authSessionManager.js";
 
 const createMocks = () => {
   const device: AndroidDevice = {
@@ -35,7 +36,13 @@ const createMocks = () => {
     },
   };
 
-  return { device, vision, planner };
+  const authSessionManager: AuthSessionManager = {
+    pullSession: vi.fn(),
+    pushSession: vi.fn(),
+    pushSessionIfExists: vi.fn(),
+  };
+
+  return { device, vision, planner, authSessionManager };
 };
 
 describe("Explorer", () => {
@@ -100,5 +107,23 @@ describe("Explorer", () => {
     expect(device.scroll).toHaveBeenNthCalledWith(1, "down");
     expect(device.scroll).toHaveBeenNthCalledWith(2, "up");
     expect(route.steps[1]?.screenshotPath).toBe("/tmp/screen-1.png");
+  });
+
+  it("AuthSessionManagerが指定されていればpushSessionIfExistsを先に実行する", async () => {
+    const { device, vision, planner, authSessionManager } = createMocks();
+    device.captureScreenshot = vi.fn().mockResolvedValue("/tmp/screen-0.png");
+    vision.analyze = vi.fn().mockResolvedValue([]);
+    planner.enqueue({ action: "finish" });
+    authSessionManager.pushSessionIfExists = vi.fn().mockResolvedValue(true);
+
+    const explorer = new Explorer({ device, vision, planner, authSessionManager });
+    await explorer.run({
+      url: "https://example.com",
+      intent: "テスト",
+      maxSteps: 1,
+    });
+
+    expect(authSessionManager.pushSessionIfExists).toHaveBeenCalled();
+    expect(device.openUrl).toHaveBeenCalled();
   });
 });

@@ -65,3 +65,8 @@ export interface ExplorerOptions {
   intent: string;
   maxSteps: number;
 }
+
+export interface ReplayerOptions {
+  route: Route;
+  url?: string;
+}
