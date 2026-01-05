@@ -8,7 +8,11 @@
     "test:watch": "vitest",
     "auth-setup": "tsx src/cli/authSetup.ts",
     "explore": "tsx src/cli/explore.ts",
-    "replay": "tsx src/cli/replay.ts"
+    "replay": "tsx src/cli/replay.ts",
+    "run-stories": "tsx src/cli/storyRunner.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

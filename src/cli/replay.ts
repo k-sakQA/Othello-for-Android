@@ -1,5 +1,7 @@
+import "../utils/env.js";
 import { fileURLToPath } from "node:url";
 import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { Replayer } from "../core/replayer.js";
 import { AdbAndroidDevice } from "../device/androidDevice.js";
 import { LocalShell } from "../utils/shell.js";
@@ -45,7 +47,7 @@ export const main = async () => {
 };
 
 const isDirectRun =
-  fileURLToPath(import.meta.url) === fileURLToPath(process.argv[1] ?? "");
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1] ?? "");
 if (isDirectRun) {
   main().catch((error) => {
     console.error("replay に失敗しました", error);

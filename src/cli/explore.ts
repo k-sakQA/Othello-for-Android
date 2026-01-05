@@ -1,5 +1,6 @@
+import "../utils/env.js";
 import { fileURLToPath } from "node:url";
-import { dirname } from "node:path";
+import path from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
 import { Explorer } from "../core/explorer.js";
 import { AdbAndroidDevice } from "../device/androidDevice.js";
@@ -7,6 +8,8 @@ import { LocalShell } from "../utils/shell.js";
 import { AuthSessionManager } from "../auth/authSessionManager.js";
 import { ManualPlanner } from "../llm/manualPlanner.js";
 import { NoOpVisionClient } from "../llm/noOpVisionClient.js";
+import { OpenAIVisionClient } from "../llm/openAIVisionClient.js";
+import { OpenAIPlanner } from "../llm/openAIPlanner.js";
 
 interface Args {
   url?: string;
@@ -57,19 +60,24 @@ export const main = async () => {
   const shell = new LocalShell();
   const device = new AdbAndroidDevice(shell);
   const sessionManager = new AuthSessionManager(shell);
-  const vision = new NoOpVisionClient();
-  const planner = new ManualPlanner();
+  const apiKey = process.env.OPENAI_API_KEY ?? "";
+  const useOpenAI = apiKey.length > 0;
+  const vision = useOpenAI ? new OpenAIVisionClient({ apiKey }) : new NoOpVisionClient();
+  const planner = useOpenAI ? new OpenAIPlanner({ apiKey }) : new ManualPlanner();
+  if (!useOpenAI) {
+    console.warn("OPENAI_API_KEY が未設定のため、手動プランナー/NoOp Vision を使用します。");
+  }
   const explorer = new Explorer({ device, vision, planner, authSessionManager: sessionManager });
 
   const route = await explorer.run({ url, intent, maxSteps });
   const outPath = resolveOutputPath(out);
-  await mkdir(dirname(outPath), { recursive: true });
+  await mkdir(path.dirname(outPath), { recursive: true });
   await writeFile(outPath, JSON.stringify(route, null, 2), "utf-8");
   console.log(`✅ ルートを保存しました: ${outPath}`);
 };
 
 const isDirectRun =
-  fileURLToPath(import.meta.url) === fileURLToPath(process.argv[1] ?? "");
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1] ?? "");
 if (isDirectRun) {
   main().catch((error) => {
     console.error("explore に失敗しました", error);

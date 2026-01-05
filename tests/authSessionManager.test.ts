@@ -26,8 +26,9 @@ describe("AuthSessionManager", () => {
     const savedPath = await manager.pullSession();
 
     expect(savedPath).toBe(sessionPath);
-    expect(calls[0]).toContain(`> "${sessionPath}"`);
-    expect(calls[0]).toContain("adb exec-out run-as com.android.chrome");
+    expect(calls[0]).toBe("adb shell run-as com.android.chrome ls");
+    expect(calls[1]).toContain(`> "${sessionPath}"`);
+    expect(calls[1]).toContain("adb exec-out run-as com.android.chrome");
   });
 
   it("pushSessionでsession.binを端末に書き戻す", async () => {
@@ -39,7 +40,10 @@ describe("AuthSessionManager", () => {
 
     await manager.pushSession();
 
-    expect(calls[0]).toContain(`adb push "${sessionPath}"`);
+    expect(calls[0]).toBe("adb shell run-as com.android.chrome ls");
+    expect(calls[1]).toBe("adb shell am force-stop com.android.chrome");
+    expect(calls[2]).toContain("adb shell run-as com.android.chrome");
+    expect(calls[2]).toContain(` < "${sessionPath}"`);
   });
 
   it("pushSessionIfExistsはファイルが無ければ何もしない", async () => {
@@ -52,5 +56,27 @@ describe("AuthSessionManager", () => {
 
     expect(pushed).toBe(false);
     expect(calls).toHaveLength(0);
+  });
+
+  it("pushSessionIfExistsはrun-as不可なら復元をスキップする", async () => {
+    const calls: string[] = [];
+    const shell: Shell = {
+      run: vi.fn().mockImplementation((cmd: string) => {
+        calls.push(cmd);
+        if (cmd === "adb shell run-as com.android.chrome ls") {
+          return Promise.reject(new Error("run-as: package not debuggable"));
+        }
+        return Promise.resolve({ stdout: "", stderr: "" });
+      }),
+    };
+    const tmpDir = await mkdtemp(path.join(os.tmpdir(), "auth-"));
+    const sessionPath = path.join(tmpDir, "session.bin");
+    await writeFile(sessionPath, "dummy");
+    const manager = new AuthSessionManager(shell, { sessionPath });
+
+    const pushed = await manager.pushSessionIfExists();
+
+    expect(pushed).toBe(false);
+    expect(calls).toEqual(["adb shell run-as com.android.chrome ls"]);
   });
 });

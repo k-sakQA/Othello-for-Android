@@ -1,58 +1,79 @@
 # Othello-for-Android
 
-Android 実機上のモバイル Web アプリを、Vision + LLM を用いた探索（explore）とシナリオ再実行（replay）でテストするためのツールです。ログイン状態を再利用するための auth-setup も含みます。
+Android 実機上のモバイル Web アプリを、Vision + LLM で探索・再実行・評価するためのテスト支援ツールです。Chrome プロファイルを保存してログイン状態を再利用できます。
+
+## できること
+- Explorer: スクリーンショットを Vision で解析し、Planner が次アクションを決定して操作ルート(JSON)を自動生成
+- Replayer: 保存したルートを順番に ADB 操作で再生し、シナリオを再現
+- Auth Setup: 一度の手動ログインで Chrome プロファイルを取得し、以降の実行前に自動復元
+- Story Runner: ユーザーストーリー配列を順に実行し、Before/After を Vision + LLM で評価
+- OPENAI_API_KEY 未設定時は、Explorer が手動プランナー/NoOp Vision に自動フォールバックし、対話的に操作を指示可能
 
 ## 前提条件
-- macOS + Node.js (>= 18)
-- adb で接続済みの Android 実機（`adb devices` で確認）
-- Chrome が端末にインストール済み
-- Vision/LLM 用の API キー（Explorer/Planner 実装時に利用）
+- macOS + Node.js >= 18, npm
+- adb で接続済みの Android 実機（`adb devices` で確認）かつ Chrome インストール済み
+- `run-as com.android.chrome` が使える端末（root 化 or debuggable Chrome）※認証セッション保存時のみ必須
+- OpenAI API キー（Vision/Planner/Evaluator に利用、モデル既定値は `gpt-5.2`）
 
 ## セットアップ
 ```bash
 npm install
 ```
 
-## 認証状態の事前取得（auth-setup）
-1 回だけ手動ログインして Chrome プロファイルを保存します。以降の explore/replay 実行前に自動で端末へ復元され、ログイン済み状態から開始できます。
-
+環境変数（例）:
 ```bash
-# ログイン画面URLを指定
-npm run auth-setup -- --url "https://example.com/login"
+export OPENAI_API_KEY="sk-..."  # 未設定でも Explorer は手動モードで動作
+export OTHELLO_DEBUG=1         # OpenAI への入出力を標準出力に出す場合
 ```
+`.env` に保存しても構いません（`.gitignore` 済み）。
 
-フロー:
-1. 端末の Chrome で URL を開く
-2. ユーザーが手動でログイン（MFA 含む）
-3. Enter 押下で Chrome プロファイルを adb で pull し `auth/session.bin` に保存
+## クイックスタート
+1. `adb devices` で端末接続を確認
+2. (任意) 認証セッション保存  
+   `npm run auth-setup -- --url "https://example.com/login"`  
+   端末で手動ログインし、指示に従って Enter を押すと `auth/session.bin` に保存
+3. ルート探索  
+   `npm run explore -- --url "https://example.com" --intent "○○を確認" --max-steps 5 --out routes/login.json`  
+   `OPENAI_API_KEY` が無い場合はコンソールで操作指示を入力
+4. ルート再生  
+   `npm run replay -- --route routes/login.json --url "https://example.com"`  
+   `auth/session.bin` があれば自動で端末に push してから開始
+5. ユーザーストーリー実行  
+   ストーリーファイル例:
+   ```json
+   [
+     { "id": "story_001", "story": "10枚引くボタンを押すと確認ダイアログが表示される" },
+     { "id": "story_002", "story": "キャンセルを押すとダイアログが閉じる" }
+   ]
+   ```
+   実行: `npm run run-stories -- --stories stories.json --url "https://example.com" --out results/story-results.json`
 
-## 探索/再実行への適用
-Explorer / Replayer は起動時に `auth/session.bin` が存在すれば自動で adb push します。ログイン画面をスキップしてテストを開始できます。
+## コマンド詳細
+- `npm run auth-setup -- --url <URL>`  
+  Chrome で URL を開き、手動ログイン後に Enter を押すと `auth/session.bin` としてプロファイルを保存。Explorer/Replayer/StoryRunner 起動時に自動復元。
+- `npm run explore -- --url <URL> --intent "<意図>" --max-steps 5 --out routes/route.json`  
+  スクリーンショットを解析し、最大ステップ数まで操作を記録したルート JSON を生成。OpenAI 未設定時は対話的に手動入力。
+- `npm run replay -- --route routes/route.json [--url <URL>]`  
+  ルートのステップを index 順に再生。`--url` を指定すると再生前にページを開く。
+- `npm run run-stories -- --stories stories.json [--url <URL>] --out results/story-results.json`  
+  各ストーリーで 1 アクションを計画し実行後、Before/After を LLM が評価。OpenAI API キー必須。
+- `npm test`  
+  Vitest によるユニットテスト。
 
-`explore` / `replay` コマンドを追加しました。Vision/LLM なしでも手元で流れを確認できるよう、コンソール入力で次アクションを指示する手動プランナーを利用しています（スクリーンショット取得・tap/input/scroll/back は ADB で実行されます）。
-
-### 探索の実行
-```bash
-npm run explore -- --url "https://example.com" --intent "ログインして一覧が表示されること" --max-steps 5 --out routes/login.json
-```
-
-### ルートの再生
-```bash
-npm run replay -- --route routes/login.json --url "https://example.com"
-```
-
-## スクリプト
-- `npm test` : ユニットテスト（Vitest）
-- `npm run auth-setup -- --url <URL>` : 認証状態の取得
-
-## ディレクトリ構成（抜粋）
-- `src/core/` : Explorer / Replayer / 型定義
-- `src/auth/` : 認証セッション保存・復元、auth-setup ロジック
-- `src/device/` : adb による Android デバイス操作
-- `src/utils/` : シェルラッパーなど
+## 生成物とディレクトリ
+- `auth/session.bin` : 保存済み Chrome プロファイル
+- `routes/*.json` : Explorer が生成した操作ルート
+- `results/*.json` : Story Runner の評価結果
+- `screenshots/*.png` : 実行時に取得したスクリーンショット
+- `src/` : コアロジック（core/auth/device/llm/story/utils など）
 - `tests/` : 各モジュールのテスト
 
 ## 制限・注意点
-- adb run-as/tar に依存するため、端末や Chrome の設定によっては権限で失敗する場合があります。
-- `input text` の特殊文字エスケープは簡易的です。必要に応じて強化してください。
-- Vision/LLM 連携や CLI (explore/replay) は今後拡張予定です。既存コードを参考に組み込んでください。
+- `run-as com.android.chrome` が利用できない環境では認証セッションの保存/復元に失敗します。
+- `adb shell input text` のエスケープは簡易的です。特殊文字を多用する場合は強化してください。
+- OpenAI 連携にはネットワークアクセスが必要です。プロキシや社内ネットワーク環境では適宜設定を調整してください。
+
+## ライセンス
+MIT License
+作者：k-sakQA
+

@@ -45,4 +45,14 @@ export class AdbAndroidDevice implements AndroidDevice {
   async back(): Promise<void> {
     await this.shell.run("adb shell input keyevent 4");
   }
+
+  async getScreenSize(): Promise<{ width: number; height: number }> {
+    const result = await this.shell.run("adb shell wm size");
+    const output = `${result.stdout}\n${result.stderr}`;
+    const match = output.match(/Physical size:\s*(\d+)x(\d+)/);
+    if (!match) {
+      throw new Error(`Failed to read screen size from adb output: ${output.trim()}`);
+    }
+    return { width: Number.parseInt(match[1], 10), height: Number.parseInt(match[2], 10) };
+  }
 }

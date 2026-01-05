@@ -1,0 +1,186 @@
+[
+  {
+    "id": "story_001",
+    "story": "「ホーム画面に追加してアプリのように楽しもう！」ダイアログの下にあるバツをタップしてダイアログを閉じる",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": null,
+        "label": "Close (X) under dialog",
+        "role": "button",
+        "x_ratio": 0.5,
+        "y_ratio": 0.55,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "Tap the X button below the 「ホーム画面に追加してアプリのように楽しもう！」 dialog to close it."
+    },
+    "evaluation": {
+      "assertion": "「ホーム画面に追加してアプリのように楽しもう！」ダイアログ下の×をタップしてダイアログを閉じる",
+      "result": false,
+      "confidence": 0.86,
+      "notes": "After画面でも同じプロモーションダイアログ（modal_card、タイトル、詳しくはこちら、close(X)ボタン）が表示されたままで、閉じられた状態になっていないため。"
+    }
+  },
+  {
+    "id": "story_002",
+    "story": "「パック」をタップしてパック画面を開く",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "modal_close",
+        "label": "X",
+        "role": "button",
+        "x_ratio": 0.525,
+        "y_ratio": 0.783,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "Dismiss the promotional modal to access the app UI and tap 「パック」 next."
+    },
+    "evaluation": {
+      "assertion": "「パック」をタップしてパック画面を開く",
+      "result": false,
+      "confidence": 0.78,
+      "notes": "After画面には下部ナビに「パック」ボタンは表示されているが、パック画面を示す内容（パック一覧/購入/開封など）への遷移が確認できず、ホーム相当のコンテンツが表示されているため期待未達。Beforeはプロモーションモーダル表示で「パック」要素も見えていない。"
+    }
+  },
+  {
+    "id": "story_003",
+    "story": "画面を右から左へスワイプすると表示されるパックが変化する",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "nav_pack",
+        "label": "パック",
+        "role": "button",
+        "x_ratio": 0.515,
+        "y_ratio": 0.962,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "パック画面へ移動して、右→左スワイプでパックが変化することを確認するため"
+    },
+    "evaluation": {
+      "assertion": "画面を右から左へスワイプすると表示されるパックが変化する",
+      "result": true,
+      "confidence": 0.78,
+      "notes": "After画面でPICK UPのページャーが1/3→2/3に変化し、表示カード内容も別のものになっているため、右→左スワイプで表示内容（パック/ピックアップ）が切り替わったと判断できる。"
+    }
+  },
+  {
+    "id": "story_004",
+    "story": "「パック詳細」をタップしてパックの詳細画面を開く",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "bottom_nav_pack_icon",
+        "label": "Pack icon",
+        "role": "button",
+        "x_ratio": 0.467,
+        "y_ratio": 0.914,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "「パック詳細」へ進むため、まず下部ナビの「パック」をタップしてパック画面を開く"
+    },
+    "evaluation": {
+      "assertion": "「パック詳細」をタップしてパックの詳細画面を開く",
+      "result": false,
+      "confidence": 0.86,
+      "notes": "After画面はトップ/ホームのPICK UPカルーセルが表示されたままで、パック詳細画面を示す見出しや詳細情報（パック名、内容、購入/開封ボタン等）が確認できない。Beforeにあった「DETAIL」ボタンもAfterでは見当たらず、詳細画面への遷移が起きた証拠がない。"
+    }
+  },
+  {
+    "id": "story_005",
+    "story": "「10枚引く」ボタンをタップして表示される確認ダイアログで消費バモスが50減ることを確認する",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "draw_10_button",
+        "label": "10枚引く",
+        "role": "button",
+        "x_ratio": 0.61,
+        "y_ratio": 0.763,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": null
+    },
+    "evaluation": {
+      "assertion": "「10枚引く」ボタンをタップして表示される確認ダイアログで消費バモスが50減ることを確認する",
+      "result": false,
+      "confidence": 0.86,
+      "notes": "After画面に確認ダイアログが表示されておらず、バモス消費(50減少)を示す文言も見当たらない。通貨表示もBefore/Afterともに110のままで変化がないため、期待の確認ができていない。"
+    }
+  },
+  {
+    "id": "story_006",
+    "story": "「10枚引く」ボタンをタップすると開封演出動画が流れることが確認できる",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "draw10_button",
+        "label": "10枚引く",
+        "role": "button",
+        "x_ratio": 0.5,
+        "y_ratio": 0.671875,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": null
+    },
+    "evaluation": {
+      "assertion": "「10枚引く」ボタンをタップすると開封演出動画が流れることが確認できる",
+      "result": false,
+      "confidence": 0.74,
+      "notes": "After画面ではモーダルが消え、ページ内容が不明瞭な状態でローディングスピナーのみが表示されている。開封演出動画（動画プレイヤーや演出画面）を示すUI要素が確認できないため、期待（動画が流れることの確認）は満たされていない。"
+    }
+  },
+  {
+    "id": "story_007",
+    "story": "開封演出動画が終了すると獲得したカードが表示される",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "page_content_image",
+        "label": "Page background image",
+        "role": "image",
+        "x_ratio": 0.5,
+        "y_ratio": 0.55,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "開封演出後にカード表示へ進めるため、画面中央のコンテンツ領域をタップして次へ進む/スキップを試す"
+    },
+    "evaluation": {
+      "assertion": "開封演出動画が終了すると獲得したカードが表示される",
+      "result": true,
+      "confidence": 0.78,
+      "notes": "After画面でSRバッジ付きのカード画像（選手カード）が表示されており、獲得カードの表示に該当するため期待は満たされている。"
+    }
+  },
+  {
+    "id": "story_008",
+    "story": "カードを右スワイプすると次のカードが表示される。10枚分繰り返すと開封されたカードが10枚表示される",
+    "action": {
+      "action": "scroll",
+      "target": {
+        "id": "card_image",
+        "label": "Player card image",
+        "role": "image",
+        "x_ratio": 0.5,
+        "y_ratio": 0.5,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "カードを右スワイプして次のカードを表示する（スワイプ操作をscrollで代用）。"
+    },
+    "evaluation": {
+      "assertion": "カードを右スワイプすると次のカードが表示される。10枚分繰り返すと開封されたカードが10枚表示される",
+      "result": false,
+      "confidence": 0.74,
+      "notes": "After画面でも単一のカード表示（画像・スコア・日付・対戦カード・閉じるX）が継続しており、次のカードへの切替や10枚分の開封結果一覧（10枚表示）を示すUI変化が確認できないため。"
+    }
+  }
+]

@@ -1,15 +1,28 @@
 export type ActionType = "tap" | "input" | "scroll" | "back";
 
+export interface Bounds {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export type UIRole = "button" | "text" | "input" | "image" | "unknown";
+
+export interface ActionTarget {
+  id?: string;
+  label?: string;
+  role?: UIRole;
+  x?: number;
+  y?: number;
+  bounds?: Bounds;
+  direction?: "up" | "down";
+}
+
 export interface RouteStep {
   index: number;
   action: ActionType;
-  target?: {
-    label?: string;
-    kind?: string;
-    x?: number;
-    y?: number;
-    direction?: "up" | "down";
-  };
+  target?: ActionTarget;
   inputText?: string;
   screenshotPath?: string;
   notes?: string;
@@ -22,10 +35,11 @@ export interface Route {
 }
 
 export interface UIElement {
-  label?: string;
-  kind?: string;
-  x: number;
-  y: number;
+  id: string;
+  label: string;
+  role: UIRole;
+  bounds: Bounds;
+  confidence: number;
 }
 
 export interface VisionClient {
@@ -42,9 +56,9 @@ export interface PlannerContext {
 
 export interface PlannerDecision {
   action: ActionType | "finish";
-  target?: RouteStep["target"];
-  inputText?: string;
-  notes?: string;
+  target?: ActionTarget | null;
+  inputText?: string | null;
+  notes?: string | null;
 }
 
 export interface Planner {
@@ -58,6 +72,7 @@ export interface AndroidDevice {
   inputText(x: number, y: number, text: string): Promise<void>;
   scroll(direction: "up" | "down"): Promise<void>;
   back(): Promise<void>;
+  getScreenSize(): Promise<{ width: number; height: number }>;
 }
 
 export interface ExplorerOptions {

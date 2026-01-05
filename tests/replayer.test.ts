@@ -10,6 +10,7 @@ const createDeviceMock = (): AndroidDevice => ({
   inputText: vi.fn(),
   scroll: vi.fn(),
   back: vi.fn(),
+  getScreenSize: vi.fn().mockResolvedValue({ width: 1000, height: 2000 }),
 });
 
 const createAuthSessionManager = (): AuthSessionManager => ({

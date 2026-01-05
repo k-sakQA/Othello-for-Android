@@ -1,0 +1,186 @@
+[
+  {
+    "id": "story_001",
+    "story": "「ホーム画面に追加してアプリのように楽しもう！」ダイアログの下にあるバツをタップしてダイアログを閉じる",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": null,
+        "label": "バツ",
+        "role": "button",
+        "x_ratio": 0.95,
+        "y_ratio": 0.1,
+        "direction": "up"
+      },
+      "inputText": null,
+      "notes": "Tap the close (バツ) button on the dialog to close it."
+    },
+    "evaluation": {
+      "assertion": "The dialog titled 'ホーム画面に追加してアプリのように楽しもう！' was expected to be closed by tapping the close (バツ) button. In the 'Before' state, the dialog is implied to be present, but in the 'After' state, there is no UI element indicating the dialog or its close button. The absence of the dialog and its close button in the 'After' state suggests that the dialog was successfully closed as expected.",
+      "result": true,
+      "confidence": 0.95,
+      "notes": "No explicit dialog or close button is visible in the 'After' UI elements, indicating the dialog was closed. The rest of the UI elements remain consistent with a normal home screen, supporting the conclusion."
+    }
+  },
+  {
+    "id": "story_002",
+    "story": "「パック」をタップしてパック画面を開く",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "nav_pack",
+        "label": "パック",
+        "role": "button",
+        "x_ratio": 0.53125,
+        "y_ratio": 0.9375,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "Tap the 'パック' button in the navigation bar to open the pack screen."
+    },
+    "evaluation": {
+      "assertion": "The user taps the 'パック' (Pack) button and the app opens the pack screen, as indicated by the presence of pack-related UI elements after the tap.",
+      "result": true,
+      "confidence": 0.95,
+      "notes": "The 'パック' button is present in both before and after states. After tapping, the UI changes to show a different layout with elements such as 'OPEN' button, card images, and updated page indicators, consistent with a pack screen. The navigation bar remains but is repositioned, indicating a screen transition rather than a reload of the same page."
+    }
+  },
+  {
+    "id": "story_003",
+    "story": "画面を右から左へスワイプすると表示されるパックが変化する",
+    "action": {
+      "action": "scroll",
+      "target": {
+        "id": null,
+        "label": null,
+        "role": "unknown",
+        "x_ratio": 0.5,
+        "y_ratio": 0.5,
+        "direction": "up"
+      },
+      "inputText": null,
+      "notes": "Perform a swipe from right to left to change the displayed pack as per the story."
+    },
+    "evaluation": {
+      "assertion": "The pack displayed after swiping from right to left has not changed; the 'MATCH DAYパック' is shown both before and after the swipe, indicating the pack did not change as expected.",
+      "result": false,
+      "confidence": 0.9,
+      "notes": "The pack label and related text remain the same before and after the swipe, suggesting no change in the displayed pack."
+    }
+  },
+  {
+    "id": "story_004",
+    "story": "「パック詳細」をタップしてパックの詳細画面を開く",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "pack_details_button",
+        "label": "パック詳細",
+        "role": "button",
+        "x_ratio": 0.625,
+        "y_ratio": 0.7,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "Tap the 'パック詳細' button to open the pack details screen as per the story."
+    },
+    "evaluation": {
+      "assertion": "The user taps on the 'パック詳細' button to open the pack detail screen. The before and after UI elements show that the screen layout and elements have changed, indicating navigation to a detail screen. The 'パック詳細' button is still present but at a different position and size, and other elements have shifted accordingly, consistent with opening a detail view. Therefore, the expectation that tapping 'パック詳細' opens the pack detail screen is satisfied.",
+      "result": true,
+      "confidence": 0.95,
+      "notes": "The UI elements have changed positions and sizes, consistent with navigating to a detail screen. The presence of the 'パック詳細' button in both states suggests the user is still within the pack detail context, or the screen has updated accordingly. No contradictory evidence found."
+    }
+  },
+  {
+    "id": "story_005",
+    "story": "「10枚引く」ボタンをタップして表示される確認ダイアログで消費バモスが50減ることを確認する",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "button_draw_10",
+        "label": "10枚引く 10",
+        "role": "button",
+        "x_ratio": 0.52,
+        "y_ratio": 0.87,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "Tap the '10枚引く' button to trigger the confirmation dialog."
+    },
+    "evaluation": {
+      "assertion": "The story expects that tapping the '10枚引く' button triggers a confirmation dialog showing that the consumed バモス (currency) decreases by 50. Comparing before and after UI elements, the currency value before is 110 and after is still labeled as '110' (as a button label), with no indication of a decrease by 50 or a confirmation dialog showing the consumption. There is no explicit confirmation dialog element visible in the after state. Therefore, the expectation that the consumed バモス decreases by 50 upon tapping the '10枚引く' button and is confirmed in a dialog is not satisfied.",
+      "result": false,
+      "confidence": 0.95,
+      "notes": "Currency label remains at 110 before and after; no confirmation dialog detected in the after UI elements."
+    }
+  },
+  {
+    "id": "story_006",
+    "story": "「10枚引く」ボタンをタップすると開封演出動画が流れることが確認できる",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "draw_10_button",
+        "label": "10枚引く 10",
+        "role": "button",
+        "x_ratio": 0.40625,
+        "y_ratio": 0.8,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "Tap the '10枚引く' button to verify the opening animation video plays."
+    },
+    "evaluation": {
+      "assertion": "After tapping the '10枚引く' button, an opening animation video should play, indicating the pack opening process.",
+      "result": false,
+      "confidence": 0.9,
+      "notes": "The before and after UI elements show the presence of the '10枚引く' button before and after tap, but there is no indication or new UI element representing an opening animation video or any visual change that confirms the video is playing. The screen content remains largely the same, suggesting the opening animation did not play or is not visible in the after state."
+    }
+  },
+  {
+    "id": "story_007",
+    "story": "開封演出動画が終了すると獲得したカードが表示される",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "button_draw_1",
+        "label": "1枚引く 1",
+        "role": "button",
+        "x_ratio": 0.05,
+        "y_ratio": 0.77,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "Tap the button to draw 1 card after the opening video ends and cards are displayed."
+    },
+    "evaluation": {
+      "assertion": "After the opening animation video ends, the acquired cards are displayed.",
+      "result": false,
+      "confidence": 0.9,
+      "notes": "The 'After' UI elements do not show any new card display or acquired cards. The elements remain similar to the 'Before' state with no indication of card acquisition display."
+    }
+  },
+  {
+    "id": "story_008",
+    "story": "カードを右スワイプすると次のカードが表示される。10枚分繰り返すと開封されたカードが10枚表示される",
+    "action": {
+      "action": "tap",
+      "target": {
+        "id": "button_draw_10",
+        "label": "10枚引く 10",
+        "role": "button",
+        "x_ratio": 0.54,
+        "y_ratio": 0.75,
+        "direction": "down"
+      },
+      "inputText": null,
+      "notes": "Tap the button to draw 10 cards, starting the card reveal process."
+    },
+    "evaluation": {
+      "assertion": "The story expects that after right-swiping through 10 cards, 10 opened cards are displayed. The before and after UI elements do not show any explicit evidence of 10 opened cards being displayed after the swipe action. The elements mostly remain similar, with no new elements indicating opened cards visible in the after state.",
+      "result": false,
+      "confidence": 0.9,
+      "notes": "The provided UI elements before and after do not include any new elements representing opened cards or a list of 10 cards. Without visual or textual evidence of the cards being displayed after swiping, the expectation is not met."
+    }
+  }
+]

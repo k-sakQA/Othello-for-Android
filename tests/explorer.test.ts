@@ -16,6 +16,7 @@ const createMocks = () => {
     inputText: vi.fn(),
     scroll: vi.fn(),
     back: vi.fn(),
+    getScreenSize: vi.fn().mockResolvedValue({ width: 1000, height: 2000 }),
   };
 
   const vision: VisionClient = {
@@ -50,7 +51,13 @@ describe("Explorer", () => {
     const { device, vision, planner } = createMocks();
     device.captureScreenshot = vi.fn().mockResolvedValue("/tmp/screen-0.png");
     vision.analyze = vi.fn().mockResolvedValue([
-      { label: "ログイン", kind: "button", x: 10, y: 20 },
+      {
+        id: "btn-login",
+        label: "ログイン",
+        role: "button",
+        bounds: { x: 5, y: 10, w: 10, h: 20 },
+        confidence: 0.9,
+      },
     ]);
     planner.enqueue({
       action: "tap",

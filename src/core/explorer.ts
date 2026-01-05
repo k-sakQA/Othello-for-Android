@@ -73,18 +73,20 @@ export class Explorer {
   ): Promise<RouteStep> {
     const { action, target, inputText, notes } = decision;
     if (action === "tap") {
-      if (typeof target?.x !== "number" || typeof target?.y !== "number") {
+      const coords = this.resolveTargetCoords(target);
+      if (!coords) {
         throw new Error("tap には target.x, target.y が必要です");
       }
-      await this.device.tap(target.x, target.y);
+      await this.device.tap(coords.x, coords.y);
     } else if (action === "input") {
-      if (typeof target?.x !== "number" || typeof target?.y !== "number") {
+      const coords = this.resolveTargetCoords(target);
+      if (!coords) {
         throw new Error("input には target.x, target.y が必要です");
       }
       if (typeof inputText !== "string") {
         throw new Error("input には inputText が必要です");
       }
-      await this.device.inputText(target.x, target.y, inputText);
+      await this.device.inputText(coords.x, coords.y, inputText);
     } else if (action === "scroll") {
       const direction = target?.direction ?? "down";
       await this.device.scroll(direction);
@@ -98,11 +100,26 @@ export class Explorer {
     const step: RouteStep = {
       index: stepIndex,
       action,
-      target,
-      inputText,
+      target: target ?? undefined,
+      inputText: typeof inputText === "string" ? inputText : undefined,
       screenshotPath,
-      notes,
+      notes: typeof notes === "string" ? notes : undefined,
     };
     return step;
+  }
+
+  private resolveTargetCoords(
+    target: PlannerDecision["target"],
+  ): { x: number; y: number } | null {
+    if (typeof target?.x === "number" && typeof target?.y === "number") {
+      return { x: target.x, y: target.y };
+    }
+    if (target?.bounds) {
+      return {
+        x: Math.round(target.bounds.x + target.bounds.w / 2),
+        y: Math.round(target.bounds.y + target.bounds.h / 2),
+      };
+    }
+    return null;
   }
 }
